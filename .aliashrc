@@ -1,0 +1,32 @@
+#####################
+#######system########
+#####################
+alias sized='sudo du -sh .' #donne la taille du repo courant
+alias sizetop10='echo taille en Mo && sudo du -ahm --max-depth=1 | sort -nr | head -n 10' #top 10 des dossiers par taille
+alias vcp='sudo rsync -ah --progress' #un cp avec % d avancement
+alias ram_clear='sudo sysctl vm.drop_caches=3'
+alias displaypskwifi='sudo grep -H psk= /etc/NetworkManager/system-connections/*'
+alias hgrep='history | grep -i'
+#meteo ou meteo paris
+function meteo () { gtmax ; curl -s -H 'Accept-Language: fr' wttr.in/"$1" ; }
+alias calendrier='var=$(cal); echo "${var/$(date +%-d)/$(echo -e "\033[1;31m$(date +%-d)\033[0m")}"'
+#exemple d utilisation "tvsearch 21:" ou "tvsearch m6" nessite le package libxml2-utils sous ubuntu
+function tvsearch () {  curl -s https://webnext.fr/templates/webnext_exclusive/views/includes/epg_cache/programme-tv-rss_$(date +"%d-%m-%Y").xml | sed "s/\!\[CDATA\[/\!\[CDATA\[NEW_LINE/g" | xmllint --xpath '//title/text()' - | sed "s/\!\[CDATA\[NEW_LINE/\n/g" | sed "s/]]><//g"| awk -F "|" '{ print $2 "- " $1 "-" $3}' | sed 'y/áàâäçéèêëîïìôöóùúüñÂÀÄÇÉÈÊËÎÏÔÖÙÜÑ/aaaaceeeeiiiooouuunAAACEEEEIIOOUUN/'| tr '[:upper:]' '[:lower:]' |  sort | grep -i "$1" | more ;  }
+
+#####################
+#######locate########
+#####################
+function locatefilm () { locate --transliterate -i "$1" | grep -i '\.mkv$\|\.avi$\|\.mts$\|\.mpg$\|\.mp4$\|\.flv$\|\.ts$\|\.wmv$\|\.mov$\|\.divx$\|\.xvid$\|\.mka$\|\.mks$' ; }
+function locatemusic () { locate --transliterate -i "$1" | grep -i '\.mp3$\|\.flac$$\|\.wav$$\|\.wma$$\|\.ogg$$\|\.ogv$$\|\.oga$$\|\.ogx$$\|\.aac$' ; }
+function locatebook () { locate --transliterate -i "$1" | grep -i '\.pdf$\|\.epub$\|\.djvu$\|\.doc$\|\.xdoc$\|\.ppt$\|\.pptx$\|\.xls$\|\.xlsx$\|\.odp$\|\.odt$\|\.ods$' ; }
+
+#####################
+#######docker########
+#####################
+alias dockerclear='docker system prune --volumes -f'
+alias dockerstop='docker stop $(docker ps -q)'
+function dockerbash () { docker exec -it -u root:root "$1"  /bin/sh ; }
+function dockergodmode () { docker run -it -u root:root --entrypoint="/bin/sh" "$1" -c /bin/sh ; }
+alias dockerupdate='docker images | grep -v REPOSITORY | awk '\''{print $1":"$2}'\'' | xargs -L1 docker pull'
+
+
